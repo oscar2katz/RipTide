@@ -57,7 +57,7 @@ LOG_FILE = os.environ.get("RIPTIDE_LOG", "riptide_auto_log.csv")
 # Anyone who knows the topic name can read it, so make it long and random.
 NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "riptide-PASTE-A-LONG-RANDOM-NAME")
 ALERTS_ON = bool(os.environ.get("NTFY_TOPIC")) or False   # on GitHub this turns on by itself
-ALERT_EVERY_RUN = False         # True also alerts on quiet days with no trades
+ALERT_EVERY_RUN = True         # True also alerts on quiet days with no trades
 
 HOLIDAYS = set(pd.to_datetime("""2026-01-01 2026-01-19 2026-02-16 2026-04-03 2026-05-25 2026-06-19
 2026-07-03 2026-09-07 2026-11-26 2026-12-25 2027-01-01 2027-01-18 2027-02-15 2027-03-26
