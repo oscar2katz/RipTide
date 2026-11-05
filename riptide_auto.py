@@ -57,7 +57,7 @@ LOG_FILE = os.environ.get("RIPTIDE_LOG", "riptide_auto_log.csv")
 # Anyone who knows the topic name can read it, so make it long and random.
 NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "riptide-PASTE-A-LONG-RANDOM-NAME")
 ALERTS_ON = bool(os.environ.get("NTFY_TOPIC")) or False   # on GitHub this turns on by itself
-ALERT_EVERY_RUN = True         # True also alerts on quiet days with no trades
+ALERT_EVERY_RUN = True          # True also alerts on quiet days with no trades
 
 HOLIDAYS = set(pd.to_datetime("""2026-01-01 2026-01-19 2026-02-16 2026-04-03 2026-05-25 2026-06-19
 2026-07-03 2026-09-07 2026-11-26 2026-12-25 2027-01-01 2027-01-18 2027-02-15 2027-03-26
@@ -221,6 +221,12 @@ def main():
             print("Riptide already ran today, nothing to do.")
             return []
         if not clock.get("is_open"):
+            now_min = now_ny.hour * 60 + now_ny.minute
+            if is_trading_day(today) and now_min >= close_today:
+                send_alert("Riptide MISSED today",
+                           "GitHub started Riptide after the market closed, so it couldn't trade today. "
+                           "It will catch up on the next trading day. If this keeps happening, tell Claude.")
+                log([{"day": f"{today:%Y-%m-%d}", "sym": "", "action": "missed", "price": np.nan, "why": "late run"}])
             return []
     upcoming = [d for d in sorted(CLOSE_TIMES) if today <= d <= today + pd.Timedelta(days=7)
                 and CLOSE_TIMES[d] < 16 * 60]
