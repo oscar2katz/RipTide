@@ -1,11 +1,13 @@
 # Riptide schedule
 name: Riptide daily run
 
+# GitHub's clock is UTC and its schedules can run late, so Riptide is started
+# many times each afternoon. Only the first run inside the trading window acts,
+# the rest see it already ran and exit.
 on:
   schedule:
     - cron: "40 16 * * 1-5"
-    - cron: "35 19 * * 1-5"
-    - cron: "35 20 * * 1-5"
+    - cron: "*/15 17-20 * * 1-5"
   workflow_dispatch: {}
 
 permissions:
@@ -37,4 +39,4 @@ jobs:
           git config user.name "riptide-bot"
           git config user.email "riptide-bot@users.noreply.github.com"
           git add -f riptide_auto_log.csv 2>/dev/null || true
-          git diff --cached --quiet || (git commit -m "Riptide log $(date -u +%F)" && git push)
+          git diff --cached --quiet || (git commit -m "Riptide log $(date -u +%F)" && git pull --rebase && git push)
